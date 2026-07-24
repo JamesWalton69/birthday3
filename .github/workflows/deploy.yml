@@ -1,0 +1,30 @@
+name: Push to Temp Account
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  push-to-temp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to destination
+        env:
+          DEST_REPO: github.com/recordingacc02-tech/my-website-temp.git
+          USER_EMAIL: recordingacc02@gmail.com
+          USER_NAME: recordingacc02-tech
+        run: |
+          git config --global user.email "$USER_EMAIL"
+          git config --global user.name "$USER_NAME"
+          
+          # Add the temp repo URL using the secret token
+          git remote add temp-repo https://${{ secrets.TEMP_ACCOUNT_PAT }}@$DEST_REPO
+          
+          # Force push to ensure the temp repo perfectly matches the main repo
+          git push temp-repo main -f
