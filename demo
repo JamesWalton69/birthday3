@@ -1,0 +1,53 @@
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+from html.parser import HTMLParser
+from urllib.parse import urljoin
+
+class LinkParser(HTMLParser):
+    """Extract href values from anchor tags using the standard library."""
+
+    def __init__(self):
+        super().__init__()
+        self.links = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            href = dict(attrs).get("href")
+            if href:
+                self.links.append(href)
+
+def list_directory_contents(url):
+    try:
+        # Fetch the page
+        request = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urlopen(request, timeout=10) as response:
+            page = response.read().decode(response.headers.get_content_charset() or "utf-8")
+
+        # Parse HTML and extract all links
+        parser = LinkParser()
+        parser.feed(page)
+
+        links = []
+        for href in parser.links:
+            # Skip parent directory links
+            if href not in ('../', './'):
+                full_url = urljoin(url, href)
+                links.append(full_url)
+
+        return links
+
+    except (HTTPError, URLError, TimeoutError, UnicodeDecodeError) as e:
+        print(f"Error fetching URL: {e}")
+        return []
+
+# Example usage
+if __name__ == "__main__":
+    directory_url = "https://www.selfstudys.com/sitepdfs/"  # Must be a directory listing page
+    contents = list_directory_contents(directory_url)
+
+    if contents:
+        print("Directory contents:")
+        for item in contents:
+            print(item)
+    else:
+        print("No contents found or directory listing disabled.")
