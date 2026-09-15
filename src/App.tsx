@@ -15,36 +15,67 @@ export const App: React.FC = () => {
   };
 
   const handleStartExplore = () => {
-    const galleryEl = document.getElementById('gallery');
+    const galleryEl = document.getElementById('scene-memories');
     if (galleryEl) {
       galleryEl.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="app-main-wrapper">
-      {/* Background Synthesized Celebration Music */}
+    <div className="journey-container">
       <AudioPlayer isPlaying={isPlayingMusic} />
-
-      {/* Floating Header Navbar */}
+      
+      {/* Mobile optimized floating Navbar */}
       <Navbar isPlayingMusic={isPlayingMusic} onToggleMusic={toggleMusic} />
 
-      <main>
-        {/* Hero Section */}
-        <Hero onStartExplore={handleStartExplore} />
+      {/* 1. Takeoff Scene */}
+      <section className="scene" id="scene-takeoff">
+        <div className="scene-content">
+          <Hero onStartExplore={handleStartExplore} />
+        </div>
+      </section>
 
-        {/* Memory Unwrap Gallery */}
-        <Gallery />
+      {/* 2. Flying Scene (Timeline of journey) */}
+      <section className="scene" id="scene-flying">
+        <div className="scene-content">
+          <Timeline />
+        </div>
+      </section>
 
-        {/* Relationship Timeline */}
-        <Timeline />
+      {/* 3. Birthday Reveal Scene */}
+      <section className="scene" id="scene-birthday">
+        <div className="scene-content">
+          <h2>Happy Birthday!</h2>
+        </div>
+      </section>
 
-        {/* Love Letter */}
-        <LoveLetter />
+      {/* 4. Message Scene */}
+      <section className="scene" id="scene-message">
+        <div className="scene-content">
+          <LoveLetter />
+        </div>
+      </section>
 
-        {/* Grand Finale Closing & Wish Board */}
-        <Closing />
-      </main>
+      {/* 5. Memories Scene */}
+      <section className="scene" id="scene-memories">
+        <div className="scene-content">
+          <Gallery />
+        </div>
+      </section>
+
+      {/* 6. Celebration Scene */}
+      <section className="scene" id="scene-celebration">
+        <div className="scene-content">
+          <Closing />
+        </div>
+      </section>
+
+      {/* 7. Final Surprise Scene */}
+      <section className="scene" id="scene-finale">
+        <div className="scene-content">
+          <h2>One Last Thing...</h2>
+        </div>
+      </section>
     </div>
   );
 };
