@@ -1,0 +1,526 @@
+/* ==========================================================================
+   Interactions CSS — LoveLetter, Closing, CelebrationEffects
+   ========================================================================== */
+
+/* --- Tactile Letter (LoveLetter.tsx) --- */
+
+.love-letter-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 300px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Envelope wrapper — CSS flip animation */
+.envelope-wrapper {
+  position: relative;
+  width: 260px;
+  height: 180px;
+  perspective: 1000px;
+}
+
+.envelope-back,
+.envelope-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.envelope-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #be185d, #ec4899);
+  box-shadow: 0 8px 32px rgba(190, 24, 93, 0.3);
+  z-index: 2;
+}
+
+.envelope-wrapper.is-open .envelope-back {
+  transform: rotateY(-180deg);
+}
+
+.envelope-seal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.envelope-hint {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.envelope-front {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  z-index: 1;
+  transform: rotateY(0deg);
+  overflow: hidden;
+}
+
+.envelope-wrapper.is-open .envelope-front {
+  transform: rotateY(180deg);
+  z-index: 3;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(135deg, #ec4899, #be185d);
+  clip-path: polygon(0 0, 50% 60%, 100% 0);
+  border-radius: 12px 12px 0 0;
+}
+
+.envelope-body {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  border: 2px solid #fce7f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.envelope-inner {
+  width: 90%;
+  padding: 1rem;
+}
+
+.letter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.letter-line {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #1f2937;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+.letter-sparkle {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+/* Pulse ring on closed envelope */
+.pulse-ring {
+  position: absolute;
+  width: 260px;
+  height: 180px;
+  border: 2px solid rgba(236, 72, 153, 0.4);
+  border-radius: 12px;
+  animation: pulse-ring 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0;
+  }
+}
+
+/* --- Closing / Cake (Closing.tsx) --- */
+
+.closing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2rem 1rem;
+}
+
+.cake-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cake appears from below */
+.cake-illustration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cake-visible .cake-illustration {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cake-layer {
+  border-radius: 8px;
+  position: relative;
+}
+
+.cake-layer-bottom {
+  width: 140px;
+  height: 50px;
+  background: linear-gradient(135deg, #be185d, #ec4899);
+}
+
+.cake-layer-middle {
+  width: 120px;
+  height: 40px;
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  margin-top: -4px;
+}
+
+.cake-layer-top {
+  width: 100px;
+  height: 35px;
+  background: linear-gradient(135deg, #f472b6, #fbcfe8);
+  margin-top: -4px;
+}
+
+.cake-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #be185d;
+  margin-top: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Candles row */
+.candles-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.candle-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Candle stick */
+.candle-stick {
+  width: 8px;
+  height: 40px;
+  background: linear-gradient(180deg, #fef3c7, #fcd34d);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+}
+
+/* Flame — flicker via CSS keyframe */
+.candle-flame {
+  position: relative;
+  margin-top: -8px;
+}
+
+.flame {
+  width: 12px;
+  height: 20px;
+  background: radial-gradient(ellipse at bottom, #fbbf24, #f59e0b, #ef4444);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.15s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+@keyframes flicker {
+  0% {
+    transform: scale(1, 1) rotate(-2deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.95, 1.1) rotate(2deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.05, 0.95) rotate(-1deg);
+    opacity: 1;
+  }
+}
+
+/* Blown out candle */
+.candle-wrapper.blown-out .candle-stick {
+  background: linear-gradient(180deg, #94a3b8, #64748b);
+  height: 36px;
+}
+
+.candle-wrapper.blown-out .candle-flame {
+  display: none;
+}
+
+.no-flame {
+  display: none;
+}
+
+/* Smoke effect */
+.candle-smoke {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.smoke-puff {
+  width: 16px;
+  height: 16px;
+  background: rgba(148, 163, 184, 0.6);
+  border-radius: 50%;
+  animation: smoke-rise 1s ease-out forwards;
+}
+
+.smoke-puff-2 {
+  animation-delay: 0.2s;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: -10px;
+  left: 4px;
+}
+
+@keyframes smoke-rise {
+  0% {
+    opacity: 0.6;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(1.5);
+  }
+}
+
+/* Celebration overlay — emoji confetti */
+.celebration-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: celebration-pop 0.5s ease-out;
+}
+
+@keyframes celebration-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.celebration-emoji-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  max-width: 300px;
+}
+
+.confetti-piece {
+  display: inline-block;
+  animation: confetti-float 2s ease-in-out infinite;
+}
+
+.confetti-piece:nth-child(1) { animation-delay: 0s; }
+.confetti-piece:nth-child(2) { animation-delay: 0.1s; }
+.confetti-piece:nth-child(3) { animation-delay: 0.2s; }
+.confetti-piece:nth-child(4) { animation-delay: 0.3s; }
+.confetti-piece:nth-child(5) { animation-delay: 0.4s; }
+.confetti-piece:nth-child(6) { animation-delay: 0.5s; }
+.confetti-piece:nth-child(7) { animation-delay: 0.6s; }
+.confetti-piece:nth-child(8) { animation-delay: 0.7s; }
+.confetti-piece:nth-child(9) { animation-delay: 0.8s; }
+
+@keyframes confetti-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(10deg);
+  }
+}
+
+.celebration-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #be185d;
+  margin: 0;
+  animation: celebration-text-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes celebration-text-glow {
+  0% {
+    text-shadow: 0 0 8px rgba(236, 72, 153, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 20px rgba(236, 72, 153, 0.6);
+  }
+}
+
+/* --- Celebration Effects (CelebrationEffects.tsx) --- */
+
+.celebration-effects {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.balloons-layer,
+.sparkles-layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Floating balloons — CSS animation only */
+.floating-balloon {
+  position: absolute;
+  bottom: -60px;
+  animation-name: float-up;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.balloon-emoji {
+  font-size: 1.5rem;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+/* Sparkle particles — CSS animation only */
+.sparkle-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation-name: sparkle-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes sparkle-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- Reduced Motion Preference --- */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring,
+  .envelope-wrapper,
+  .envelope-back,
+  .envelope-front,
+  .cake-illustration,
+  .candle-layer,
+  .flame,
+  .smoke-puff,
+  .celebration-overlay,
+  .confetti-piece,
+  .celebration-text,
+  .floating-balloon,
+  .sparkle-particle {
+    animation: none !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  .envelope-wrapper.is-open .envelope-back,
+  .envelope-wrapper.is-open .envelope-front {
+    transform: none;
+    opacity: 1;
+  }
+
+  .cake-illustration {
+    opacity: 1;
+    transform: none;
+  }
+
+  .letter-line {
+    opacity: 1;
+    transform: none;
+  }
+
+  .floating-balloon {
+    bottom: 50%;
+    opacity: 0.6;
+  }
+
+  .sparkle-particle {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+
+  .smoke-puff {
+    display: none;
+  }
+}

@@ -1,221 +1,120 @@
-import React, { useState } from 'react';
-import confetti from 'canvas-confetti';
-import { motion, AnimatePresence } from 'motion/react';
-import { Flame, Sparkles, Send, Heart, PartyPopper, CheckCircle } from 'lucide-react';
-import { birthdayData } from '../data/birthdayData';
-import { useInView } from '../hooks/useInView';
+import React, { useState, useEffect, useRef } from 'react';
+import './interactions.css';
 
+interface Candle {
+  id: number;
+  blownOut: boolean;
+}
+
+/**
+ * Closing.tsx — Cinematic Birthday Moment
+ *
+ * - Cake appears from below with a smooth entrance.
+ * - Candles flicker using keyframe CSS animation.
+ * - Tap a candle → it blows out with smoke effect.
+ * - All candles blown → celebration moment triggers (confetti/sparkles using CSS/emoji, no heavy libraries).
+ */
 export const Closing: React.FC = () => {
-  const [sectionRef, isInView] = useInView<HTMLElement>({ threshold: 0.1 });
-  const [candlesLit, setCandlesLit] = useState<boolean[]>([true, true, true, true, true]);
-  const [wishInput, setWishInput] = useState('');
-  const [wishesList, setWishesList] = useState<string[]>(birthdayData.defaultWishes);
-  const [wishSubmitted, setWishSubmitted] = useState(false);
+  const [candles, setCandles] = useState<Candle[]>(() =>
+    Array.from({ length: 5 }, (_, i) => ({ id: i, blownOut: false }))
+  );
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [cakeVisible, setCakeVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const launchConfetti = () => {
-    // Canvas confetti burst
-    confetti({
-      particleCount: 120,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#f43f5e', '#ec4899', '#38bdf8', '#f0c040', '#a855f7'],
-    });
+  // Cake entrance animation — appears from below
+  useEffect(() => {
+    const timer = setTimeout(() => setCakeVisible(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
 
-    // Side cannons for extra wow factor
-    setTimeout(() => {
-      confetti({
-        particleCount: 60,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-      });
-      confetti({
-        particleCount: 60,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-      });
-    }, 250);
+  // Trigger celebration when all candles are blown out
+  useEffect(() => {
+    const allBlown = candles.every((c) => c.blownOut);
+    if (allBlown && candles.length > 0) {
+      setShowCelebration(true);
+    }
+  }, [candles]);
+
+  const handleCandleTap = (id: number) => {
+    setCandles((prev) =>
+      prev.map((c) => (c.id === id && !c.blownOut ? { ...c, blownOut: true } : c))
+    );
   };
-
-  const blowOutCandle = (index: number) => {
-    setCandlesLit((prev) => {
-      const next = [...prev];
-      next[index] = false;
-
-      // If all candles blown out, celebrate!
-      if (next.every((lit) => !lit)) {
-        launchConfetti();
-      }
-      return next;
-    });
-  };
-
-  const relightCandles = () => {
-    setCandlesLit([true, true, true, true, true]);
-  };
-
-  const handleWishSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!wishInput.trim()) return;
-
-    setWishesList((prev) => [`✨ ${wishInput.trim()}`, ...prev]);
-    setWishInput('');
-    setWishSubmitted(true);
-    launchConfetti();
-
-    setTimeout(() => setWishSubmitted(false), 3000);
-  };
-
-  const allBlownOut = candlesLit.every((lit) => !lit);
 
   return (
-    <section id="wishes" ref={sectionRef} className="section closing-section">
-      <div className="section-header">
-        <span className="eyebrow">Grand Finale</span>
-        <h2 className="section-title">Make a Wish & Celebrate!</h2>
-        <p className="section-description">
-          Tap each candle to blow it out and send your birthday wishes into the universe!
-        </p>
-      </div>
-
-      <div className="closing-grid">
-        {/* Interactive Cake Container */}
-        <motion.div
-          className="cake-card"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="cake-instructions">
-            {allBlownOut ? (
-              <span className="instructions-tag success">
-                🎉 All wishes made! Happy Birthday!
-              </span>
-            ) : (
-              <span className="instructions-tag">
-                🔥 Tap each flame to blow out the candles!
-              </span>
-            )}
+    <div className="closing-container" ref={containerRef}>
+      <div className={`cake-stage ${cakeVisible ? 'cake-visible' : ''}`}>
+        {/* Cake layers — appear from below */}
+        <div className="cake-illustration">
+          <div className="cake-layer cake-layer-bottom">
+            {/* Bottom layer */}
           </div>
+          <div className="cake-layer cake-layer-middle">
+            {/* Middle layer */}
+          </div>
+          <div className="cake-layer cake-layer-top">
+            {/* Top layer */}
+          </div>
+          <div className="cake-text">HAPPY BIRTHDAY</div>
 
-          <div className="cake-illustration">
-            {/* Candles Row */}
-            <div className="candles-row">
-              {candlesLit.map((isLit, idx) => (
-                <div
-                  key={idx}
-                  className={`candle ${isLit ? 'lit' : 'extinguished'}`}
-                  onClick={() => blowOutCandle(idx)}
-                >
-                  <div className="candle-wick"></div>
-                  {isLit ? (
-                    <motion.div
-                      className="flame"
-                      animate={{
-                        scale: [1, 1.15, 0.95, 1],
-                        rotate: [-2, 3, -1, 0],
-                      }}
-                      transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <Flame size={18} />
-                    </motion.div>
-                  ) : (
-                    <div className="smoke"></div>
-                  )}
-                  <div className="candle-stick"></div>
+          {/* Candles row */}
+          <div className="candles-row">
+            {candles.map((candle) => (
+              <div
+                key={candle.id}
+                className={`candle-wrapper ${candle.blownOut ? 'blown-out' : ''}`}
+                onClick={() => handleCandleTap(candle.id)}
+                role="button"
+                tabIndex={0}
+                aria-label={candle.blownOut ? 'Candle blown out' : 'Blow out candle'}
+                onKeyDown={(e) => {
+                  if ((e.key === 'Enter' || e.key === ' ') && !candle.blownOut) {
+                    e.preventDefault();
+                    handleCandleTap(candle.id);
+                  }
+                }}
+              >
+                {/* Candle stick */}
+                <div className="candle-stick" />
+
+                {/* Flame — flicker via CSS keyframe animation */}
+                <div className={`candle-flame ${candle.blownOut ? 'no-flame' : ''}`}>
+                  <div className="flame" aria-hidden="true" />
                 </div>
-              ))}
-            </div>
 
-            {/* Cake Layers */}
-            <div className="cake-body">
-              <div className="cake-frosting-top"></div>
-              <div className="cake-layer layer-top">
-                <div className="layer-decorations">
-                  <span>🌸</span>
-                  <span>✨</span>
-                  <span>🌸</span>
-                  <span>✨</span>
-                  <span>🌸</span>
-                </div>
+                {/* Smoke effect when blown out */}
+                {candle.blownOut && (
+                  <div className="candle-smoke" aria-hidden="true">
+                    <div className="smoke-puff" />
+                    <div className="smoke-puff smoke-puff-2" />
+                  </div>
+                )}
               </div>
-              <div className="cake-layer layer-bottom">
-                <div className="cake-text">HAPPY BIRTHDAY SOPHIA</div>
-              </div>
-              <div className="cake-stand"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Celebration moment — confetti / sparkles using CSS/emoji only */}
+        {showCelebration && (
+          <div className="celebration-overlay" aria-live="polite">
+            <div className="celebration-emoji-row">
+              <span className="confetti-piece">🎉</span>
+              <span className="confetti-piece">🎊</span>
+              <span className="confetti-piece">✨</span>
+              <span className="confetti-piece">🎈</span>
+              <span className="confetti-piece">🎉</span>
+              <span className="confetti-piece">✨</span>
+              <span className="confetti-piece">🎊</span>
+              <span className="confetti-piece">🎈</span>
+              <span className="confetti-piece">✨</span>
             </div>
+            <p className="celebration-text">🎉 Happy Birthday! 🎉</p>
           </div>
-
-          <div className="cake-actions">
-            {allBlownOut ? (
-              <button className="btn-secondary relight-btn" onClick={relightCandles}>
-                Relight Candles 🔥
-              </button>
-            ) : null}
-
-            <button className="btn-primary celebrate-btn" onClick={launchConfetti}>
-              <PartyPopper size={18} />
-              <span>Launch Confetti! 🎉</span>
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Wish Wall & Input Box */}
-        <motion.div
-          className="wishes-card"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="wishes-header">
-            <Heart size={20} className="wish-icon" />
-            <h3>Birthday Wish Board</h3>
-          </div>
-
-          <form onSubmit={handleWishSubmit} className="wish-form">
-            <div className="input-group">
-              <input
-                type="text"
-                value={wishInput}
-                onChange={(e) => setWishInput(e.target.value)}
-                placeholder="Write your warm wish here..."
-                maxLength={120}
-              />
-              <button type="submit" className="wish-submit-btn" disabled={!wishInput.trim()}>
-                <Send size={16} />
-              </button>
-            </div>
-            {wishSubmitted && (
-              <p className="wish-success-msg">
-                <CheckCircle size={14} /> Wish added to the board & confetti launched!
-              </p>
-            )}
-          </form>
-
-          <div className="wishes-scroll-list">
-            <AnimatePresence>
-              {wishesList.map((wish, idx) => (
-                <motion.div
-                  key={idx}
-                  className="wish-item-card"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p>{wish}</p>
-                  <Sparkles size={14} className="wish-item-sparkle" />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </motion.div>
+        )}
       </div>
-
-      <footer className="birthday-footer">
-        <p>Made with ❤️ for Sophia's Special Day</p>
-        <span className="footer-copyright">Forever celebrating extraordinary moments • 2026</span>
-      </footer>
-    </section>
+    </div>
   );
 };
+
+export default Closing;

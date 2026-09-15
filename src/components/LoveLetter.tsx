@@ -1,122 +1,118 @@
-import React, { useState, useEffect, useRef } from 'react';
-import anime from 'animejs';
-import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Sparkles, Heart, RefreshCw, Feather } from 'lucide-react';
-import { birthdayData } from '../data/birthdayData';
-import { useInView } from '../hooks/useInView';
+import React, { useState, useRef } from 'react';
+import { motion } from 'motion/react';
+import { Envelope, Sparkles } from 'lucide-react';
+import './interactions.css';
 
-export const LoveLetter: React.FC = () => {
-  const [sectionRef, isInView] = useInView<HTMLElement>({ threshold: 0.1 });
+interface LoveLetterProps {
+  recipient?: string;
+  sender?: string;
+  message?: string;
+}
+
+/**
+ * LoveLetter.tsx — Tactile Envelope Interaction
+ *
+ * Initial state: a closed envelope centered on screen with subtle pulse animation.
+ * On tap: envelope "opens" with a CSS flip/unfold animation.
+ * After open: letter content reveals line-by-line with a fade-in stagger.
+ * Must feel natural and tactile on mobile touch.
+ */
+export const LoveLetter: React.FC<LoveLetterProps> = ({
+  recipient = 'Sophia',
+  sender = 'Your Friend',
+  message = 'Wishing you the happiest birthday!',
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const letterBodyRef = useRef<HTMLDivElement>(null);
+  const [hasBeenTouched, setHasBeenTouched] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleOpenLetter = () => {
-    if (isOpen) return;
-    setIsOpen(true);
-    setIsTyping(true);
+  const handleTap = () => {
+    if (!isOpen) {
+      setHasBeenTouched(true);
+      setIsOpen(true);
+    }
   };
 
-  useEffect(() => {
-    if (isOpen && isTyping && letterBodyRef.current) {
-      const paragraphs = letterBodyRef.current.querySelectorAll('.letter-p');
-      paragraphs.forEach((p) => (p.innerHTML = p.textContent || ''));
-
-      anime({
-        targets: letterBodyRef.current.querySelectorAll('.letter-p'),
-        opacity: [0, 1],
-        translateY: [15, 0],
-        delay: anime.stagger(250),
-        duration: 800,
-        easing: 'easeOutQuad',
-        complete: () => setIsTyping(false),
-      });
-    }
-  }, [isOpen, isTyping]);
+  // Letter lines for stagger reveal
+  const lines = [
+    `Dear ${recipient},`,
+    message,
+    'Every moment shared with you is a treasure.',
+    'Here is to another year of joy and laughter.',
+    `With love, ${sender}`,
+  ];
 
   return (
-    <section id="letter" ref={sectionRef} className="section letter-section">
-      <div className="section-header">
-        <span className="eyebrow">A Special Note</span>
-        <h2 className="section-title">The Love Letter</h2>
-        <p className="section-description">
-          Tap the wax seal below to unseal a heartfelt message written just for you.
-        </p>
+    <div
+      className="love-letter-container"
+      ref={containerRef}
+      onClick={handleTap}
+      role="button"
+      tabIndex={0}
+      aria-label={isOpen ? 'Open letter' : 'Closed envelope'}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleTap();
+        }
+      }}
+    >
+      {/* Envelope wrapper — CSS flip/unfold animation via class toggle */}
+      <div className={`envelope-wrapper ${isOpen ? 'is-open' : ''}`}>
+        {/* Back of envelope */}
+        <div className="envelope-back">
+          <div className="envelope-seal">
+            <Envelope size={32} color="#ec4899" />
+          </div>
+          <p className="envelope-hint">Tap to open</p>
+        </div>
+
+        {/* Front of envelope (flips open) */}
+        <div className="envelope-front">
+          <div className="envelope-flap" />
+          <div className="envelope-body">
+            <div className="envelope-inner">
+              {isOpen && (
+                <div className="letter-content">
+                  {lines.map((line, index) => (
+                    <motion.p
+                      key={index}
+                      className="letter-line"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={isOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                      transition={{
+                        duration: 0.4,
+                        delay: 0.3 + index * 0.15,
+                      }}
+                    >
+                      {line}
+                    </motion.p>
+                  ))}
+
+                  {/* Decorative sparkles after reveal */}
+                  {hasBeenTouched && isOpen && (
+                    <motion.div
+                      className="letter-sparkle"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.2 }}
+                    >
+                      <Sparkles size={16} color="#fbbf24" />
+                    </motion.div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="letter-wrapper">
-        <AnimatePresence mode="wait">
-          {!isOpen ? (
-            /* Closed Envelope State */
-            <motion.div
-              key="envelope"
-              className="envelope-container"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={isInView ? { scale: 1, opacity: 1 } : {}}
-              exit={{ scale: 0.9, opacity: 0, translateY: -50 }}
-              onClick={handleOpenLetter}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <div className="envelope-flap"></div>
-              <div className="envelope-body">
-                <div className="envelope-content-preview">
-                  <Mail size={48} className="envelope-icon" />
-                  <p className="envelope-recipient">{birthdayData.loveLetterTitle}</p>
-                  <p className="envelope-sub">Private & Confidential 💌</p>
-                </div>
-
-                {/* Wax Seal Button */}
-                <div className="wax-seal" onClick={handleOpenLetter}>
-                  <Heart size={24} fill="#ffffff" />
-                  <span className="seal-text">OPEN</span>
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            /* Unsealed Magic Shimmer Card State */
-            <motion.div
-              key="opened-letter"
-              className="opened-letter-card shimmer-bg"
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-            >
-              <div className="letter-header">
-                <Feather className="letter-quill" size={24} />
-                <h3 className="letter-recipient-title">{birthdayData.loveLetterTitle}</h3>
-                <Sparkles size={20} className="letter-sparkle" />
-              </div>
-
-              <div ref={letterBodyRef} className="letter-body">
-                {birthdayData.loveLetterContent.map((paragraph, index) => (
-                  <p key={index} className="letter-p">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-
-              <div className="letter-signature">
-                <span className="signature-line"></span>
-                <p className="sender-name">{birthdayData.loveLetterSender}</p>
-              </div>
-
-              <div className="letter-footer-actions">
-                <button
-                  className="btn-secondary replay-letter-btn"
-                  onClick={() => {
-                    setIsOpen(false);
-                    setTimeout(() => setIsOpen(true), 300);
-                  }}
-                >
-                  <RefreshCw size={14} />
-                  <span>Re-read Message</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
+      {/* Pulse animation on the closed envelope */}
+      {!isOpen && (
+        <div className="pulse-ring" aria-hidden="true" />
+      )}
+    </div>
   );
 };
+
+export default LoveLetter;
