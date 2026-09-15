@@ -1,0 +1,56 @@
+/* Airplane & Sky Environment Styles */
+
+.sky-environment {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1; /* Below content, above base */
+  overflow: hidden;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.05); /* very subtle */
+  border-radius: 50%;
+  filter: blur(10px);
+  will-change: transform;
+}
+
+.airplane-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50; /* Above regular content, below modals if any */
+}
+
+.airplane-sprite {
+  position: absolute;
+  font-size: 2.5rem;
+  will-change: transform;
+  transform-origin: center center;
+  filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.3));
+  transition: transform 0.1s linear;
+}
+
+.contrail {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6));
+  transform-origin: right center;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .airplane-sprite {
+    transition: none;
+  }
+}

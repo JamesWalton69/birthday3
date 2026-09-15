@@ -3,9 +3,14 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Gallery } from './components/Gallery';
 import { Timeline } from './components/Timeline';
-import { LoveLetter } from './components/LoveLetter';
+import { TactileLetter } from './components/TactileLetter';
 import { Closing } from './components/Closing';
+import { CakeReveal } from './components/CakeReveal';
 import { AudioPlayer } from './components/AudioPlayer';
+import { SkyEnvironment } from './components/SkyEnvironment';
+import { AirplaneScene } from './components/AirplaneScene';
+import { CelebrationEffects } from './components/CelebrationEffects';
+import birthdayData from './data/birthdayData';
 
 export const App: React.FC = () => {
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
@@ -23,6 +28,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="journey-container">
+      <SkyEnvironment />
+      <AirplaneScene />
       <AudioPlayer isPlaying={isPlayingMusic} />
       
       {/* Mobile optimized floating Navbar */}
@@ -45,14 +52,14 @@ export const App: React.FC = () => {
       {/* 3. Birthday Reveal Scene */}
       <section className="scene" id="scene-birthday">
         <div className="scene-content">
-          <h2>Happy Birthday!</h2>
+          <CakeReveal />
         </div>
       </section>
 
       {/* 4. Message Scene */}
       <section className="scene" id="scene-message">
         <div className="scene-content">
-          <LoveLetter />
+          <TactileLetter />
         </div>
       </section>
 
@@ -66,14 +73,16 @@ export const App: React.FC = () => {
       {/* 6. Celebration Scene */}
       <section className="scene" id="scene-celebration">
         <div className="scene-content">
+          <CelebrationEffects />
           <Closing />
         </div>
       </section>
 
       {/* 7. Final Surprise Scene */}
       <section className="scene" id="scene-finale">
-        <div className="scene-content">
-          <h2>One Last Thing...</h2>
+        <div className="scene-content" style={{textAlign: 'center', padding: '2rem'}}>
+          <h2>{birthdayData.finalMessage || "One Last Thing..."}</h2>
+          <p>Thank you for being you.</p>
         </div>
       </section>
     </div>
