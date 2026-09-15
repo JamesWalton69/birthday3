@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Candle, Heart, Sparkles, CheckCircle } from 'lucide-react';
+import { Flame, Heart, Sparkles, CheckCircle } from 'lucide-react';
+import { birthdayData } from '../data/birthdayData';
 
 /**
  * CakeReveal.tsx
@@ -44,7 +45,8 @@ export const CakeReveal: React.FC<CakeRevealProps> = ({
 }) => {
   const [state, setState] = useState<'waiting' | 'candle_revealing' | 'ready' | 'celebrating'>('waiting');
   const [blownOutCandles, setBlownOutCandles] = useState<Set<number>>(new Set());
-  const [showCelebration, setShowCelebration] = useState(false);
+  const [wishes, setWishes] = useState<string[]>(birthdayData.defaultWishes || []);
+  const [newWish, setNewWish] = useState('');
 
   // Theme color configuration
   const themeConfig = {
@@ -70,15 +72,6 @@ export const CakeReveal: React.FC<CakeRevealProps> = ({
 
   const colors = themeConfig[themeColor];
 
-  // Determine cake color based on theme
-  const getCakeColor = () => {
-    switch (themeColor) {
-      case 'rose': return 'linear-gradient(135deg, #f43f5e, #be123c)';
-      case 'gold': return 'linear-gradient(135deg, #f0c040, #fbbf24)';
-      case 'blue': return 'linear-gradient(135deg, #38bdf8, #0ea5e9)';
-    }
-  };
-
   // Auto-animate candles appearance
   useEffect(() => {
     if (state === 'waiting') {
@@ -93,7 +86,6 @@ export const CakeReveal: React.FC<CakeRevealProps> = ({
   useEffect(() => {
     if (blownOutCandles.size === candleCount && state !== 'celebrating') {
       setState('celebrating');
-      setShowCelebration(true);
       onAllCandlesOut?.();
     }
   }, [blownOutCandles, candleCount, state, onAllCandlesOut]);
@@ -216,7 +208,7 @@ export const CakeReveal: React.FC<CakeRevealProps> = ({
                             transition: { duration: 2 + Math.random() * 2, repeat: Infinity },
                           }}
                         >
-                          <Candle size={32} color={isBlownOut ? '#94a3b8' : colors.accent} />
+                          <Flame size={32} color={isBlownOut ? '#94a3b8' : colors.accent} />
                         </motion.div>
 
                         {/* Smoke after blow out */}
@@ -311,12 +303,26 @@ export const CakeReveal: React.FC<CakeRevealProps> = ({
             <div className="input-group">
               <input
                 type="text"
+                value={newWish}
+                onChange={(e) => setNewWish(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newWish.trim() && (state.includes('ready') || state.includes('celebrating'))) {
+                    setWishes([newWish.trim(), ...wishes]);
+                    setNewWish('');
+                  }
+                }}
                 placeholder="Make a wish or write something sweet..."
                 disabled={!state.includes('ready') && !state.includes('celebrating')}
                 style={{ opacity: state.includes('ready') || state.includes('celebrating') ? 1 : 0.5 }}
               />
               <button
                 className="wish-submit-btn"
+                onClick={() => {
+                  if (newWish.trim() && (state.includes('ready') || state.includes('celebrating'))) {
+                    setWishes([newWish.trim(), ...wishes]);
+                    setNewWish('');
+                  }
+                }}
                 disabled={!state.includes('ready') && !state.includes('celebrating')}
                 style={{ opacity: state.includes('ready') || state.includes('celebrating') ? 1 : 0.5 }}
               >
@@ -336,12 +342,14 @@ export const CakeReveal: React.FC<CakeRevealProps> = ({
           </div>
 
           <div className="wishes-scroll-list">
-            <div className="wish-item-card">
-              <span>✨ Wish appears here</span>
-              <span className="wish-item-sparkle">
-                <Sparkles size={12} />{' '}
-              </span>
-            </div>
+            {wishes.map((wish, idx) => (
+              <div key={idx} className="wish-item-card">
+                <span>✨ {wish}</span>
+                <span className="wish-item-sparkle">
+                  <Sparkles size={12} />{' '}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

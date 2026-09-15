@@ -36,7 +36,6 @@ export const CelebrationEffects: React.FC<CelebrationEffectsProps> = ({
   theme = 'rose',
 }) => {
   // Total elements must not exceed 12
-  const total = balloonCount + sparkleCount;
   const safeBalloons = Math.min(balloonCount, Math.max(0, 12 - sparkleCount));
   const safeSparkles = Math.min(sparkleCount, Math.max(0, 12 - safeBalloons));
 

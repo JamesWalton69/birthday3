@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Envelope, MessageCircle, Sparkles, Heart } from 'lucide-react';
+import { Mail, Sparkles, Heart } from 'lucide-react';
 
 /**
  * TactileLetter.tsx
@@ -154,10 +154,10 @@ export const TactileLetter: React.FC<TactileLetterProps> = ({
         {/* Envelope container */}
         <motion.div
           className="envelope-container"
-          initial={{ y: 0, rotation: 0 }}
+          initial={{ y: 0, rotate: 0 }}
           animate={{
             y: state === 'open' ? -320 : 0,
-            rotation: state === 'open' ? -20 : 0,
+            rotate: state === 'open' ? -20 : 0,
             transition: {
               type: 'spring',
               stiffness: 200,
@@ -169,7 +169,7 @@ export const TactileLetter: React.FC<TactileLetterProps> = ({
         >
           <div className="envelope-content-preview">
             <div className="envelope-icon">
-              <Envelope size={48} color="#ec4899" />
+              <Mail size={48} color="#ec4899" />
             </div>
             <div>
               <div className="envelope-recipient">{recipient}</div>

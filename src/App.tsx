@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { Gallery } from './components/Gallery';
+import { MemoryGallery } from './components/MemoryGallery';
 import { Timeline } from './components/Timeline';
 import { TactileLetter } from './components/TactileLetter';
 import { Closing } from './components/Closing';
@@ -10,7 +10,7 @@ import { AudioPlayer } from './components/AudioPlayer';
 import { SkyEnvironment } from './components/SkyEnvironment';
 import { AirplaneScene } from './components/AirplaneScene';
 import { CelebrationEffects } from './components/CelebrationEffects';
-import birthdayData from './data/birthdayData';
+import { birthdayData } from './data/birthdayData';
 
 export const App: React.FC = () => {
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
@@ -31,7 +31,7 @@ export const App: React.FC = () => {
       <SkyEnvironment />
       <AirplaneScene />
       <AudioPlayer isPlaying={isPlayingMusic} />
-      
+
       {/* Mobile optimized floating Navbar */}
       <Navbar isPlayingMusic={isPlayingMusic} onToggleMusic={toggleMusic} />
 
@@ -52,21 +52,25 @@ export const App: React.FC = () => {
       {/* 3. Birthday Reveal Scene */}
       <section className="scene" id="scene-birthday">
         <div className="scene-content">
-          <CakeReveal />
+          <CakeReveal candleCount={5} themeColor="rose" />
         </div>
       </section>
 
       {/* 4. Message Scene */}
       <section className="scene" id="scene-message">
         <div className="scene-content">
-          <TactileLetter />
+          <TactileLetter 
+            recipient={birthdayData.recipientName}
+            sender={birthdayData.loveLetterSender}
+            message={birthdayData.loveLetterContent.join('\n\n')}
+          />
         </div>
       </section>
 
       {/* 5. Memories Scene */}
       <section className="scene" id="scene-memories">
         <div className="scene-content">
-          <Gallery />
+          <MemoryGallery images={birthdayData.gallery} />
         </div>
       </section>
 
@@ -81,6 +85,7 @@ export const App: React.FC = () => {
       {/* 7. Final Surprise Scene */}
       <section className="scene" id="scene-finale">
         <div className="scene-content" style={{textAlign: 'center', padding: '2rem'}}>
+          {/* @ts-ignore */}
           <h2>{birthdayData.finalMessage || "One Last Thing..."}</h2>
           <p>Thank you for being you.</p>
         </div>
