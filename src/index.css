@@ -416,10 +416,11 @@ body::after {
   font-weight: 600;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
   cursor: pointer;
   box-shadow: 0 10px 35px rgba(244, 63, 94, 0.45);
-  transition: all 0.25 ease;
+  transition: all 0.25s ease;
 }
 
 .hero-btn {
@@ -1064,6 +1065,7 @@ body::after {
   font-weight: 500;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1326,3 +1328,131 @@ body::after {
   opacity: 0.6;
   font-size: 0.75rem;
 }
+
+/* ============================================================
+   MOBILE RESPONSIVENESS FIXES
+   ============================================================ */
+@media (max-width: 768px) {
+  .section {
+    padding: clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem);
+  }
+
+  /* Navbar Adjustments */
+  .navbar-header, .navbar-header.scrolled {
+    padding: 0.8rem 1rem;
+  }
+  .navbar-links {
+    display: none;
+  }
+  .celebrate-nav-btn, .music-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    min-height: 44px; /* Better tap target */
+  }
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  /* Hero Adjustments */
+  .hero-name-row {
+    font-size: clamp(2.5rem, 10vw, 4.5rem);
+  }
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    min-height: 52px; /* Better tap target */
+  }
+  .hero-actions {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* Gallery Adjustments */
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .lightbox-close {
+    width: 44px;
+    height: 44px;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  .gallery-tabs {
+    gap: 0.5rem;
+  }
+  .gallery-tab {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    flex-grow: 1;
+    text-align: center;
+    min-height: 48px; /* Better tap target */
+  }
+  .card-image-wrapper {
+    height: 250px;
+  }
+
+  /* Letter Adjustments */
+  .opened-letter-card {
+    padding: 1.5rem;
+  }
+  .envelope-container {
+    height: 240px;
+  }
+  .letter-recipient-title {
+    font-size: 1.3rem;
+  }
+  .letter-body {
+    font-size: 0.95rem;
+  }
+
+  /* Closing Adjustments */
+  .cake-card, .wishes-card {
+    padding: 1.5rem;
+  }
+  .candles-row {
+    gap: 0.8rem;
+  }
+  .cake-layer {
+    width: 180px;
+  }
+  .layer-bottom {
+    width: 210px;
+    height: 50px;
+  }
+  .cake-stand {
+    width: 240px;
+  }
+  .cake-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .cake-actions button {
+    width: 100%;
+  }
+  .input-group {
+    flex-direction: column;
+  }
+  .input-group input {
+    width: 100%;
+  }
+  .wish-submit-btn {
+    width: 100%;
+    border-radius: 24px;
+    padding: 0.8rem;
+    height: auto;
+    min-height: 48px;
+  }
+
+  /* Timeline Adjustments */
+  .timeline-card {
+    padding: 1.2rem;
+  }
+  .card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+}
+
